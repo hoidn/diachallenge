@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% block body %}
+<body style="margin:30px;">
+<script type="text/javascript">
+  var format_review = function(review) {
+    return review + '<br/>'
+  }
+
+  $(function() {
+    var submit_form = function(e) {
+      $.getJSON($SCRIPT_ROOT + '/_query_restaurant', {
+        name: $('input[name="name"]').val(),
+	n: $('input[name="n"]').val(),
+      }, function(data) {
+        var reviews = $('#result').text(data.reviews);
+        var score = $('#result2').text(data.score);
+	//obj.html(obj.html().replace(/\n/g,'<br/>'));
+	//input = reviews.html().split('\n')
+//	console.log(typeof(reviews))
+//	console.log(reviews)
+//	console.log(reviews.map(format_review))
+	reviews.html(reviews.html().split('\n').map(format_review).reduce(function(a, b) {return a + b}))
+	//reviews.html(reviews.html().replace(/[\n]+/g,'<br>'));
+	score.html('Mean rating: ' + score.html() + '<br/>')
+        //obj.html(format_sub(obj.html()).reduce(function(a, b) {return a + b}))
+      });
+      return false;
+    };
+
+    $('input[type=text]').bind('keyup', function(e) {
+    if (e.keyCode == 13) {
+        submit_form(e);
+    }
+    });
+
+    $('input[name=name]').focus();
+  });
+</script>
+
+
+
+<h3>Pizza reviews</h3>
+
+
+<div id="contentBox" style="margin:0px auto; width:70%">
+ <!-- columns divs, float left, no margin so there is no space between column, width=1/3 -->
+    <div id="column1" style="float:left; margin:0; width:33%;">
+            <label for="sub">Business name</label>
+	    <input placeholder="e.g., Di Fara Pizza" type="text" id='sub' name="name"> 
+    </div>
+
+    <div id="column2" style="float:left; margin:10;width:33%;">
+            <label for="author">Number of reviews</label>
+            <input type="text" name="n" id="author" class="validate" value="10" >
+    </div>
+</div>
+
+<br/>
+<br/>
+<p>
+  <span id="result2"></span>
+  <span id="result"></span>
+</p>
+
+</body>
+{% endblock %}
